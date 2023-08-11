@@ -1,0 +1,66 @@
+var fx = "5x^2 - x^2 + 10"//Si deriva
+var fx2="4x^2"//No deriva
+var fx3="x + 3 - 2x + 1x^3 //No deriva
+        //val resul = derivarFuncion(fx)
+        //println("La derivada es: $resul")
+        
+fun derivarFuncion(funcionOriginal: String): String {
+    val terminos = funcionOriginal.split(" + ", " - ").map { it.trim() }
+
+    val signos = funcionOriginal.map { it == '+' || it == '-' }.mapIndexed{ index, present ->
+        if (present) funcionOriginal[index] else null }.filterNotNull()
+
+    // CON ESTO IRE CONCATENANDO
+    var str = ""
+    
+    val derivados = terminos.mapIndexed { index, termino ->
+        
+        val collection1 = termino.split('x','^').map({ elm -> if(elm != "") elm else null })
+        val col1Filter = collection1.filter({ elm -> elm != null })
+        var _val = 1
+        col1Filter.map({ elm ->
+        	_val = _val * elm!!.toInt()
+        })
+            
+        
+        val signo = if (index < signos.size) signos[index].toString() else ""
+        val coeficiente = termino.substringBefore("x").trim().toIntOrNull() ?: 1
+        val exponente = termino.substringAfter("^").trim().toIntOrNull() ?: 1
+        val derivadoCoeficiente = coeficiente * exponente
+        val derivadoExponente = exponente - 1
+        
+        
+        if((index + 1) != terminos.count()) {
+            println("valor base [$termino]")
+         	println("-----------------------------------")
+            println("coleccion con null ---> $collection1")
+            println("coleccion sin null ---> $col1Filter")
+            println("multiplica ---> $_val \n")   
+            
+            str += "${_val}x "
+            if(index == 0) str += signos[1] + " "
+        }
+    	
+        when(index) {
+            1 -> str
+            else -> ""
+        }
+        
+		/*
+        when (derivadoExponente) {
+            0 -> "$signo$derivadoCoeficiente"
+            1 -> "$signo${derivadoCoeficiente}x"
+            else -> "$signo$derivadoCoeficiente x^$derivadoExponente"
+        }
+        */
+    }
+    
+    return derivados.joinToString(" ")
+}
+
+fun main() {
+    var result = derivarFuncion(fx)
+    println("-------------------")
+    println(">>>>> " + result)
+    println("----> main function")
+}
